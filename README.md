@@ -1,6 +1,6 @@
-# ViewDragHelperTest
-使用ViewDragHelper实现QQ5.X侧滑酷炫效果以及沉浸式状态实现
-# 效果掩饰如下
+# DragHelper4QQ
+模仿实现QQ6.X侧滑效果
+# 效果演示如下
 <img src="https://github.com/jiangqqlmj/DragHelper4QQ/blob/master/test.gif"/></br>
 
 本人CSDN博文地址<a href="http://blog.csdn.net/developer_jiangqq">http://blog.csdn.net/developer_jiangqq</a></br>
