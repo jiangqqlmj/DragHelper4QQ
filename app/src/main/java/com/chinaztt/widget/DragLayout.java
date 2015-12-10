@@ -265,6 +265,7 @@ public class DragLayout extends FrameLayout {
             return;
         }
         float percent = mainLeft / (float) range;
+        //滑动动画效果
         animateView(percent);
         //进行回调滑动的百分比
         dragListener.onDrag(percent);
@@ -282,33 +283,14 @@ public class DragLayout extends FrameLayout {
      */
     private void animateView(float percent) {
         float f1 = 1 - percent * 0.5f;
-        //沿着水平X轴平移
+
         ViewHelper.setTranslationX(vg_left, -vg_left.getWidth() / 2.5f + vg_left.getWidth() / 2.5f * percent);
         if (isShowShadow) {
             //阴影效果视图大小进行缩放
             ViewHelper.setScaleX(iv_shadow, f1 * 1.2f * (1 - percent * 0.10f));
             ViewHelper.setScaleY(iv_shadow, f1 * 1.85f * (1 - percent * 0.10f));
         }
-        getBackground().setColorFilter(evaluate(percent, Color.BLACK, Color.TRANSPARENT), Mode.SRC_OVER);
     }
-
-    private Integer evaluate(float fraction, Object startValue, Integer endValue) {
-        int startInt = (Integer) startValue;
-        int startA = (startInt >> 24) & 0xff;
-        int startR = (startInt >> 16) & 0xff;
-        int startG = (startInt >> 8) & 0xff;
-        int startB = startInt & 0xff;
-        int endInt = (Integer) endValue;
-        int endA = (endInt >> 24) & 0xff;
-        int endR = (endInt >> 16) & 0xff;
-        int endG = (endInt >> 8) & 0xff;
-        int endB = endInt & 0xff;
-        return (int) ((startA + (int) (fraction * (endA - startA))) << 24)
-                | (int) ((startR + (int) (fraction * (endR - startR))) << 16)
-                | (int) ((startG + (int) (fraction * (endG - startG))) << 8)
-                | (int) ((startB + (int) (fraction * (endB - startB))));
-    }
-
     /**
      * 有加速度,当我们停止滑动的时候，该不会立即停止动画效果
      */
