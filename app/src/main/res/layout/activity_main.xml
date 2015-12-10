@@ -1,0 +1,42 @@
+<com.chinaztt.widget.DragLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    >
+    <!--下层 左边的布局-->
+    <include layout="@layout/left_view_layout"/>
+    <!--上层 右边的主布局-->
+    <com.chinaztt.widget.CustomRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            >
+        <RelativeLayout
+            android:id="@+id/rl_title"
+            android:layout_width="match_parent"
+            android:layout_height="49dp"
+            android:gravity="bottom"
+            android:background="@android:color/holo_orange_light"
+             >
+             <include layout="@layout/common_top_bar_layout"/>
+        </RelativeLayout>
+        <!--中间内容后面放入Fragment-->
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+           <fragment
+               android:id="@+id/main_info_fragment"
+               class="com.chinaztt.fragment.OneFragment"
+               android:layout_width="fill_parent"
+               android:layout_height="fill_parent"/>
+        </FrameLayout>
+        </LinearLayout>
+    </com.chinaztt.widget.CustomRelativeLayout>
+</com.chinaztt.widget.DragLayout>

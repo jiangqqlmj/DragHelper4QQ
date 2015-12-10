@@ -1,0 +1,26 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="49dp"
+    android:background="@android:color/holo_orange_light"
+    >
+    <com.chinaztt.widget.RoundAngleImageView
+        android:id="@+id/iv_icon"
+        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/icon_logo"
+        app:roundWidth="17.5dp"
+        app:roundHeight="17.5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="仿QQ6.0侧滑界面"
+        android:layout_centerInParent="true"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        />
+</RelativeLayout>
