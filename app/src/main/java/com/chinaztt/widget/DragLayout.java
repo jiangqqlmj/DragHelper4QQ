@@ -26,7 +26,7 @@ import com.nineoldandroids.view.ViewHelper;
  * 使用ViewRragHelper实现侧滑效果功能
  */
 public class DragLayout extends FrameLayout {
-    private boolean isShowShadow = true;
+    private static final boolean IS_SHOW_SHADOW = true;
     //手势处理类
     private GestureDetectorCompat gestureDetector;
     //视图拖拽移动帮助类
@@ -50,31 +50,10 @@ public class DragLayout extends FrameLayout {
     //页面状态 默认为关闭
     private Status status = Status.Close;
 
-    public DragLayout(Context context) {
-        this(context, null);
-    }
-
-    public DragLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-        this.context = context;
-    }
-
-    public DragLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        gestureDetector = new GestureDetectorCompat(context, new YScrollDetector());
-        dragHelper = ViewDragHelper.create(this, dragHelperCallback);
-    }
-
-    class YScrollDetector extends SimpleOnGestureListener {
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float dx, float dy) {
-            return Math.abs(dy) <= Math.abs(dx);
-        }
-    }
     /**
      * 实现子View的拖拽滑动，实现Callback当中相关的方法
      */
-    private ViewDragHelper.Callback dragHelperCallback = new ViewDragHelper.Callback() {
+    private final ViewDragHelper.Callback dragHelperCallback = new ViewDragHelper.Callback() {
         /**
          * 水平方向移动
          * @param child Child view being dragged
@@ -157,7 +136,7 @@ public class DragLayout extends FrameLayout {
                 mainLeft = range;
             }
 
-            if (isShowShadow) {
+            if (IS_SHOW_SHADOW) {
                 iv_shadow.layout(mainLeft, 0, mainLeft + width, height);
             }
             if (changedView == vg_left) {
@@ -168,6 +147,28 @@ public class DragLayout extends FrameLayout {
             dispatchDragEvent(mainLeft);
         }
     };
+
+    public DragLayout(Context context) {
+        this(context, null);
+    }
+
+    public DragLayout(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+        this.context = context;
+    }
+
+    public DragLayout(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        gestureDetector = new GestureDetectorCompat(context, new YScrollDetector());
+        dragHelper = ViewDragHelper.create(this, dragHelperCallback);
+    }
+
+    class YScrollDetector extends SimpleOnGestureListener {
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float dx, float dy) {
+            return Math.abs(dy) <= Math.abs(dx);
+        }
+    }
 
     /**
      * 滑动相关回调接口
@@ -191,7 +192,7 @@ public class DragLayout extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        if (isShowShadow) {
+        if (IS_SHOW_SHADOW) {
             iv_shadow = new ImageView(context);
             iv_shadow.setImageResource(R.mipmap.shadow);
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -200,7 +201,7 @@ public class DragLayout extends FrameLayout {
         //左侧界面
         vg_left = (RelativeLayout) getChildAt(0);
         //右侧(主)界面
-        vg_main = (CustomRelativeLayout) getChildAt(isShowShadow ? 2 : 1);
+        vg_main = (CustomRelativeLayout) getChildAt(IS_SHOW_SHADOW ? 2 : 1);
         vg_main.setDragLayout(this);
         vg_left.setClickable(true);
         vg_main.setClickable(true);
@@ -291,7 +292,7 @@ public class DragLayout extends FrameLayout {
         float f1 = 1 - percent * 0.5f;
 
         ViewHelper.setTranslationX(vg_left, -vg_left.getWidth() / 2.5f + vg_left.getWidth() / 2.5f * percent);
-        if (isShowShadow) {
+        if (IS_SHOW_SHADOW) {
             //阴影效果视图大小进行缩放
             ViewHelper.setScaleX(iv_shadow, f1 * 1.2f * (1 - percent * 0.10f));
             ViewHelper.setScaleY(iv_shadow, f1 * 1.85f * (1 - percent * 0.10f));

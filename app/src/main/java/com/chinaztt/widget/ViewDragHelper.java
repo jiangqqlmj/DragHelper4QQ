@@ -129,13 +129,13 @@ public class ViewDragHelper {
     private int mPointersDown;
 
     private VelocityTracker mVelocityTracker;
-    private float mMaxVelocity;
+    private final float mMaxVelocity;
     private float mMinVelocity;
 
-    private int mEdgeSize;
+    private final int mEdgeSize;
     private int mTrackingEdges;
 
-    private ScrollerCompat mScroller;
+    private final ScrollerCompat mScroller;
 
     private final Callback mCallback;
 
@@ -143,6 +143,51 @@ public class ViewDragHelper {
     private boolean mReleaseInProgress;
 
     private final ViewGroup mParentView;
+
+    /**
+     * Interpolator defining the animation curve for mScroller
+     */
+    private static final Interpolator sInterpolator = new Interpolator() {
+        public float getInterpolation(float t) {
+            t -= 1.0f;
+            return t * t * t * t * t + 1.0f;
+        }
+    };
+
+    private final Runnable mSetIdleRunnable = new Runnable() {
+        public void run() {
+            setDragState(STATE_IDLE);
+        }
+    };
+
+    /**
+     * Apps should use ViewDragHelper.create() to get a new instance.
+     * This will allow VDH to use internal compatibility implementations for different
+     * platform versions.
+     *
+     * @param context Context to initialize config-dependent params from
+     * @param forParent Parent view to monitor
+     */
+    private ViewDragHelper(Context context, ViewGroup forParent, Callback cb) {
+        if (forParent == null) {
+            throw new IllegalArgumentException("Parent view may not be null");
+        }
+        if (cb == null) {
+            throw new IllegalArgumentException("Callback may not be null");
+        }
+
+        mParentView = forParent;
+        mCallback = cb;
+
+        final ViewConfiguration vc = ViewConfiguration.get(context);
+        final float density = context.getResources().getDisplayMetrics().density;
+        mEdgeSize = (int) (EDGE_SIZE * density + 0.5f);
+
+        mTouchSlop = vc.getScaledTouchSlop();
+        mMaxVelocity = vc.getScaledMaximumFlingVelocity();
+        mMinVelocity = vc.getScaledMinimumFlingVelocity();
+        mScroller = ScrollerCompat.create(context, sInterpolator);
+    }
 
     /**
      * A Callback is used as a communication channel with the ViewDragHelper back to the
@@ -327,22 +372,6 @@ public class ViewDragHelper {
     }
 
     /**
-     * Interpolator defining the animation curve for mScroller
-     */
-    private static final Interpolator sInterpolator = new Interpolator() {
-        public float getInterpolation(float t) {
-            t -= 1.0f;
-            return t * t * t * t * t + 1.0f;
-        }
-    };
-
-    private final Runnable mSetIdleRunnable = new Runnable() {
-        public void run() {
-            setDragState(STATE_IDLE);
-        }
-    };
-
-    /**
      * Factory method to create a new ViewDragHelper.
      *
      * @param forParent Parent view to monitor
@@ -366,35 +395,6 @@ public class ViewDragHelper {
         final ViewDragHelper helper = create(forParent, cb);
         helper.mTouchSlop = (int) (helper.mTouchSlop * (1 / sensitivity));
         return helper;
-    }
-
-    /**
-     * Apps should use ViewDragHelper.create() to get a new instance.
-     * This will allow VDH to use internal compatibility implementations for different
-     * platform versions.
-     *
-     * @param context Context to initialize config-dependent params from
-     * @param forParent Parent view to monitor
-     */
-    private ViewDragHelper(Context context, ViewGroup forParent, Callback cb) {
-        if (forParent == null) {
-            throw new IllegalArgumentException("Parent view may not be null");
-        }
-        if (cb == null) {
-            throw new IllegalArgumentException("Callback may not be null");
-        }
-
-        mParentView = forParent;
-        mCallback = cb;
-
-        final ViewConfiguration vc = ViewConfiguration.get(context);
-        final float density = context.getResources().getDisplayMetrics().density;
-        mEdgeSize = (int) (EDGE_SIZE * density + 0.5f);
-
-        mTouchSlop = vc.getScaledTouchSlop();
-        mMaxVelocity = vc.getScaledMaximumFlingVelocity();
-        mMinVelocity = vc.getScaledMinimumFlingVelocity();
-        mScroller = ScrollerCompat.create(context, sInterpolator);
     }
 
     /**
@@ -659,7 +659,7 @@ public class ViewDragHelper {
      * @param absMax Absolute value of the maximum value to return
      * @return The clamped value with the same sign as <code>value</code>
      */
-    private int clampMag(int value, int absMin, int absMax) {
+    private static int clampMag(int value, int absMin, int absMax) {
         final int absValue = Math.abs(value);
         if (absValue < absMin) return 0;
         if (absValue > absMax) return value > 0 ? absMax : -absMax;
@@ -676,14 +676,14 @@ public class ViewDragHelper {
      * @param absMax Absolute value of the maximum value to return
      * @return The clamped value with the same sign as <code>value</code>
      */
-    private float clampMag(float value, float absMin, float absMax) {
+    private static float clampMag(float value, float absMin, float absMax) {
         final float absValue = Math.abs(value);
         if (absValue < absMin) return 0;
         if (absValue > absMax) return value > 0 ? absMax : -absMax;
         return value;
     }
 
-    private float distanceInfluenceForSnapDuration(float f) {
+    private static float distanceInfluenceForSnapDuration(float f) {
         f -= 0.5f; // center the values about 0.
         f *= 0.3f * Math.PI / 2.0f;
         return (float) Math.sin(f);
@@ -1070,6 +1070,8 @@ public class ViewDragHelper {
                 cancel();
                 break;
             }
+            default:
+                break;
         }
 
         return mDragState == STATE_DRAGGING;
@@ -1229,6 +1231,9 @@ public class ViewDragHelper {
                 cancel();
                 break;
             }
+            default:
+                break;
+
         }
     }
 
