@@ -27,7 +27,7 @@ public class CustomRelativeLayout extends RelativeLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        if (dl.getStatus() != DragLayout.Status.Close) {
+        if (dl.getStatus() != DragLayout.Status.CLOSE) {
             return true;
         }
         return super.onInterceptTouchEvent(event);
@@ -35,7 +35,7 @@ public class CustomRelativeLayout extends RelativeLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (dl.getStatus() != DragLayout.Status.Close) {
+        if (dl.getStatus() != DragLayout.Status.CLOSE) {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 dl.close();
             }

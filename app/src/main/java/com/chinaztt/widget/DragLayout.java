@@ -42,13 +42,13 @@ public class DragLayout extends FrameLayout {
     //main视图距离在ViewGroup距离左边的距离
     private int mainLeft;
     private Context context;
-    private ImageView iv_shadow;
+    private ImageView ivShadow;
     //左侧布局
-    private RelativeLayout vg_left;
+    private RelativeLayout vgLeft;
     //右侧(主界面布局)
-    private CustomRelativeLayout vg_main;
+    private CustomRelativeLayout vgMain;
     //页面状态 默认为关闭
-    private Status status = Status.Close;
+    private Status status = Status.CLOSE;
 
     /**
      * 实现子View的拖拽滑动，实现Callback当中相关的方法
@@ -105,9 +105,9 @@ public class DragLayout extends FrameLayout {
                 open();
             } else if (xvel < 0) {
                 close();
-            } else if (releasedChild == vg_main && mainLeft > range * 0.3) {
+            } else if (releasedChild == vgMain && mainLeft > range * 0.3) {
                 open();
-            } else if (releasedChild == vg_left && mainLeft > range * 0.7) {
+            } else if (releasedChild == vgLeft && mainLeft > range * 0.7) {
                 open();
             } else {
                 close();
@@ -125,7 +125,7 @@ public class DragLayout extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top,
                 int dx, int dy) {
-            if (changedView == vg_main) {
+            if (changedView == vgMain) {
                 mainLeft = left;
             } else {
                 mainLeft = mainLeft + left;
@@ -137,11 +137,11 @@ public class DragLayout extends FrameLayout {
             }
 
             if (IS_SHOW_SHADOW) {
-                iv_shadow.layout(mainLeft, 0, mainLeft + width, height);
+                ivShadow.layout(mainLeft, 0, mainLeft + width, height);
             }
-            if (changedView == vg_left) {
-                vg_left.layout(0, 0, width, height);
-                vg_main.layout(mainLeft, 0, mainLeft + width, height);
+            if (changedView == vgLeft) {
+                vgLeft.layout(0, 0, width, height);
+                vgMain.layout(mainLeft, 0, mainLeft + width, height);
             }
 
             dispatchDragEvent(mainLeft);
@@ -193,33 +193,33 @@ public class DragLayout extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         if (IS_SHOW_SHADOW) {
-            iv_shadow = new ImageView(context);
-            iv_shadow.setImageResource(R.mipmap.shadow);
+            ivShadow = new ImageView(context);
+            ivShadow.setImageResource(R.mipmap.shadow);
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            addView(iv_shadow, 1, lp);
+            addView(ivShadow, 1, lp);
         }
         //左侧界面
-        vg_left = (RelativeLayout) getChildAt(0);
+        vgLeft = (RelativeLayout) getChildAt(0);
         //右侧(主)界面
-        vg_main = (CustomRelativeLayout) getChildAt(IS_SHOW_SHADOW ? 2 : 1);
-        vg_main.setDragLayout(this);
-        vg_left.setClickable(true);
-        vg_main.setClickable(true);
+        vgMain = (CustomRelativeLayout) getChildAt(IS_SHOW_SHADOW ? 2 : 1);
+        vgMain.setDragLayout(this);
+        vgLeft.setClickable(true);
+        vgMain.setClickable(true);
     }
 
-    public ViewGroup getVg_main() {
-        return vg_main;
+    public ViewGroup getVgMain() {
+        return vgMain;
     }
 
-    public ViewGroup getVg_left() {
-        return vg_left;
+    public ViewGroup getVgLeft() {
+        return vgLeft;
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        width = vg_left.getMeasuredWidth();
-        height = vg_left.getMeasuredHeight();
+        width = vgLeft.getMeasuredWidth();
+        height = vgLeft.getMeasuredHeight();
         //可以水平拖拽滑动的距离 一共为屏幕宽度的80%
         range = (int) (width * 0.8f);
     }
@@ -234,8 +234,8 @@ public class DragLayout extends FrameLayout {
      */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        vg_left.layout(0, 0, width, height);
-        vg_main.layout(mainLeft, 0, mainLeft + width, height);
+        vgLeft.layout(0, 0, width, height);
+        vgMain.layout(mainLeft, 0, mainLeft + width, height);
     }
 
     /**
@@ -277,9 +277,9 @@ public class DragLayout extends FrameLayout {
         //进行回调滑动的百分比
         dragListener.onDrag(percent);
         Status lastStatus = status;
-        if (lastStatus != getStatus() && status == Status.Close) {
+        if (lastStatus != getStatus() && status == Status.CLOSE) {
             dragListener.onClose();
-        } else if (lastStatus != getStatus() && status == Status.Open) {
+        } else if (lastStatus != getStatus() && status == Status.OPEN) {
             dragListener.onOpen();
         }
     }
@@ -291,11 +291,11 @@ public class DragLayout extends FrameLayout {
     private void animateView(float percent) {
         float f1 = 1 - percent * 0.5f;
 
-        ViewHelper.setTranslationX(vg_left, -vg_left.getWidth() / 2.5f + vg_left.getWidth() / 2.5f * percent);
+        ViewHelper.setTranslationX(vgLeft, -vgLeft.getWidth() / 2.5f + vgLeft.getWidth() / 2.5f * percent);
         if (IS_SHOW_SHADOW) {
             //阴影效果视图大小进行缩放
-            ViewHelper.setScaleX(iv_shadow, f1 * 1.2f * (1 - percent * 0.10f));
-            ViewHelper.setScaleY(iv_shadow, f1 * 1.85f * (1 - percent * 0.10f));
+            ViewHelper.setScaleX(ivShadow, f1 * 1.2f * (1 - percent * 0.10f));
+            ViewHelper.setScaleY(ivShadow, f1 * 1.85f * (1 - percent * 0.10f));
         }
     }
     /**
@@ -312,7 +312,7 @@ public class DragLayout extends FrameLayout {
      * 页面状态(滑动,打开,关闭)
      */
     public enum Status {
-        Drag, Open, Close
+        DRAG, OPEN, CLOSE
     }
 
     /**
@@ -321,11 +321,11 @@ public class DragLayout extends FrameLayout {
      */
     public Status getStatus() {
         if (mainLeft == 0) {
-            status = Status.Close;
+            status = Status.CLOSE;
         } else if (mainLeft == range) {
-            status = Status.Open;
+            status = Status.OPEN;
         } else {
-            status = Status.Drag;
+            status = Status.DRAG;
         }
         return status;
     }
@@ -337,11 +337,11 @@ public class DragLayout extends FrameLayout {
     public void open(boolean animate) {
         if (animate) {
             //继续滑动
-            if (dragHelper.smoothSlideViewTo(vg_main, range, 0)) {
+            if (dragHelper.smoothSlideViewTo(vgMain, range, 0)) {
                 ViewCompat.postInvalidateOnAnimation(this);
             }
         } else {
-            vg_main.layout(range, 0, range * 2, height);
+            vgMain.layout(range, 0, range * 2, height);
             dispatchDragEvent(range);
         }
     }
@@ -353,11 +353,11 @@ public class DragLayout extends FrameLayout {
     public void close(boolean animate) {
         if (animate) {
             //继续滑动
-            if (dragHelper.smoothSlideViewTo(vg_main, 0, 0)) {
+            if (dragHelper.smoothSlideViewTo(vgMain, 0, 0)) {
                 ViewCompat.postInvalidateOnAnimation(this);
             }
         } else {
-            vg_main.layout(0, 0, width, height);
+            vgMain.layout(0, 0, width, height);
             dispatchDragEvent(0);
         }
     }
