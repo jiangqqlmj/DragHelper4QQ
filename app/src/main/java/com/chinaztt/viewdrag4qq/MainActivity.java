@@ -19,7 +19,7 @@ import com.nineoldandroids.view.ViewHelper;
 public class MainActivity extends BaseActivity {
 	private DragLayout dl;
 	private ListView lv;
-	private ImageView iv_icon, iv_bottom;
+	private ImageView ivIcon, ivBottom;
 	private QuickAdapter<ItemBean> quickAdapter;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +45,14 @@ public class MainActivity extends BaseActivity {
 			//界面滑动的时候
 			@Override
 			public void onDrag(float percent) {
-				ViewHelper.setAlpha(iv_icon, 1 - percent);
+				ViewHelper.setAlpha(ivIcon, 1 - percent);
 			}
 		});
 	}
 
 	private void initView() {
-		iv_icon = (ImageView) findViewById(R.id.iv_icon);
-		iv_bottom = (ImageView) findViewById(R.id.iv_bottom);
+		ivIcon = (ImageView) findViewById(R.id.iv_icon);
+		ivBottom = (ImageView) findViewById(R.id.iv_bottom);
 
 		lv = (ListView) findViewById(R.id.lv);
 		lv.setAdapter(quickAdapter=new QuickAdapter<ItemBean>(this,R.layout.item_left_layout, ItemDataUtils.getItemBeans()) {
@@ -69,7 +69,7 @@ public class MainActivity extends BaseActivity {
 				Toast.makeText(MainActivity.this,"Click Item "+position,Toast.LENGTH_SHORT).show();
 			}
 		});
-		iv_icon.setOnClickListener(new OnClickListener() {
+		ivIcon.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				dl.open();

@@ -14,7 +14,11 @@ import java.util.List;
  * 菜鸟窝是一个只专注做Android开发技能的在线学习平台，课程以实战项目为主，对课程与服务”吹毛求疵”般的要求，
  * 打造极致课程，是菜鸟窝不变的承诺
  */
-public class ItemDataUtils {
+public final class ItemDataUtils {
+
+    private ItemDataUtils() {
+    }
+
     public static List<ItemBean> getItemBeans(){
         List<ItemBean> itemBeans=new ArrayList<>();
         itemBeans.add(new ItemBean(R.drawable.sidebar_purse,"QQ钱包",false));
